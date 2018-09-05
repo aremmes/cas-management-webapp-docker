@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    app: apereo-cas-management
+    status: live
+  name: apereo-cas-management
+spec:
+  replicas: ${apereo-cas-management-replicas}
+  template:
+    metadata:
+      labels:
+        app: apereo-cas-management
+    spec:
+      volumes:
+        - name: apereo-cas-ssl
+          secret:
+            secretName: apereo-cas-ssl
+      containers:
+        - env:
+            - name: HOSTNAME
+              value: ${apereo-cas-management-server-host-name}
+            - name: REGISTRY_DB_HOST
+              value: ${apereo-cas-registry-db-host}
+            - name: REGISTRY_DB_PORT
+              value: "${apereo-cas-registry-db-port}"
+            - name: REGISTRY_DB_NAME
+              value: ${apereo-cas-registry-db-name}
+            - name: REGISTRY_DB_USER
+              value: ${apereo-cas-registry-db-user}
+            - name: REGISTRY_DB_PASS
+              value: ${apereo-cas-registry-db-pass}
+            - name: TOMCAT_KEYSTORE_FILE
+              value: ${apereo-cas-tomcat-keystore-file}
+            - name: TOMCAT_KEYSTORE_TYPE
+              value: ${apereo-cas-tomcat-keystore-type}
+            - name: TOMCAT_KEYSTORE_PASS
+              value: ${apereo-cas-tomcat-keystore-pass}
+            - name: TOMCAT_KEY_PASS
+              value: ${apereo-cas-tomcat-key-pass}
+            - name: TOMCAT_KEY_ALIAS
+              value: "${apereo-cas-tomcat-key-alias}"
+            - name: CAS_SERVER_NAME
+              value: ${apereo-cas-server-name}
+            - name: CAS_SERVER_PREFIX
+              value: ${apereo-cas-server-prefix}
+            - name: CAS_MGMT_SERVER_NAME
+              value: ${apereo-cas-management-server-name}
+          image: eng-kubes.dev.coredial.com:30122/apereo/cas-management:v5.4.2-1
+          name: apereo-cas-management
+          volumeMounts:
+            - name: apereo-cas-ssl
+              mountPath: /etc/cas/ssl
+          command: ["/cas-management-overlay/bin/run-cas.sh"]
+          ports:
+            - containerPort: 8081
+              name: http
+            - containerPort: 8444
+              name: https

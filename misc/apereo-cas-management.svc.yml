@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: apereo-cas-management
+  name: apereo-cas-management
+spec:
+  type: NodePort
+  clusterIP: 192.168.64.47
+  ports:
+    - name: http
+      port: 8081
+      nodePort: 30142
+      protocol: TCP
+    - name: https
+      port: 8444
+      nodePort: 30143
+      protocol: TCP
+  selector:
+    app: apereo-cas-management
