@@ -50,6 +50,7 @@ RUN cd / \
     && mkdir -p cas-management-overlay/bin;
 
 COPY bin/* cas-management-overlay/bin/
+COPY etc/cas/config/* /etc/cas/config/
 
 RUN chmod -R 750 cas-management-overlay/bin \
     && chmod 750 cas-management-overlay/mvnw \
@@ -66,6 +67,8 @@ WORKDIR /cas-management-overlay
 ENV JAVA_HOME /opt/jre-home
 ENV PATH $PATH:$JAVA_HOME/bin:.
 
-RUN ./mvnw clean package -T 10
+RUN ./mvnw clean package -T 10 \
+    && ./mvnw dependency:purge-local-repository -DactTransitively=false -DreResolve=false \
+    && rm -rf ./target/war ./target/cas-management ./target/cas-management.war.original /root/.m2
 
 CMD ["/cas-management-overlay/bin/run-cas.sh"]
