@@ -1,6 +1,6 @@
 FROM centos:centos7
 
-MAINTAINER Apereo Foundation
+MAINTAINER CoreDial, LLC
 
 ENV PATH=$PATH:$JRE_HOME/bin
 
@@ -45,17 +45,18 @@ RUN cd / \
 
 # Download the CAS overlay project \
 RUN cd / \
-    && git clone --depth 1 --single-branch -b portal-sso-docker-0.x https://cfernandez@baltig.coredial.com/cfernandez/cas-management-overlay-portal-sso.git cas-management-overlay \
+    && git clone --depth 1 --single-branch -b 5.2 https://github.com/apereo/cas-management-overlay.git cas-management-overlay \
     && mkdir -p /etc/cas/config /etc/cas/services /etc/cas/saml \
     && mkdir -p cas-management-overlay/bin;
 
-COPY bin/* cas-management-overlay/bin/
+COPY pom.xml /cas-management-overlay/
+COPY bin/* /cas-management-overlay/bin/
 COPY etc/cas/config/* /etc/cas/config/
 
-RUN chmod -R 750 cas-management-overlay/bin \
-    && chmod 750 cas-management-overlay/mvnw \
-    && chmod 750 cas-management-overlay/build.sh \
-    && chmod 750 /opt/jre-home/bin/java;
+RUN chmod -R 750 /cas-management-overlay/bin \
+    /cas-management-overlay/mvnw \
+    /cas-management-overlay/build.sh \
+    /opt/jre-home/bin/java;
 
 # Enable if you are using Oracle Java
 #	&& chmod 750 /opt/jre-home/jre/bin/java;
