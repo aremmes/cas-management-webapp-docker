@@ -45,10 +45,11 @@ RUN cd / \
 RUN cd / \
     && git clone --depth 1 --single-branch -b 5.2 https://github.com/apereo/cas-management-overlay.git cas-management-overlay \
     && mkdir -p /etc/cas/config /etc/cas/services /etc/cas/saml \
-    && mkdir -p cas-management-overlay/bin;
+    && mkdir -p cas-management-overlay/bin cas-management-overlay/src;
 
 COPY pom.xml /cas-management-overlay/
 COPY bin/* /cas-management-overlay/bin/
+COPY src/ /cas-overlay/src/
 COPY etc/cas/config/* /etc/cas/config/
 
 RUN chmod -R 750 /cas-management-overlay/bin \
